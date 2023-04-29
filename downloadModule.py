@@ -1,5 +1,6 @@
 import requests
 import subprocess
+import json
 
 def downloadAppStore():
     response = requests.get("https://rss.applemarketingtools.com/api/v2/br/apps/top-free/50/apps.json")
@@ -8,11 +9,13 @@ def downloadAppStore():
     for app in appInfos:
         
         appname = app.get("name")
-        print(appname)
-        print("\n")
         result = subprocess.check_output(["ipatool", "search", appname, "-l", "1"])
-        print(result.decode("utf-8"))
-        print("\n")
+        terminalOutput = result.decode("utf-8")
+        
+        stringJson = terminalOutput.split("[{")[1].split("}]")[0]
+        jsonOutput = json.loads("{" + stringJson+ "}")
+
+        print(jsonOutput["bundleID"])
 
 
 downloadAppStore()
