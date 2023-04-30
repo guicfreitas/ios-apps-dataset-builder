@@ -25,24 +25,29 @@ def downloadAppStore():
     for app in appInfos:
         
         appname = app.get("name")
-        result = subprocess.check_output(["ipatool", "search", appname, "-l", "1"])
-        terminalOutput = result.decode("utf-8")
+        try: 
+            result = subprocess.check_output(["ipatool", "search", appname, "-l", "1", "--format", "json"])
+        except:
+            print("Pesquisa falhou!")
+
+        terminalOutput = json.loads(result)
         
-        stringJson = terminalOutput.split("[{")[1].split("}]")[0]
-        jsonOutput = json.loads("{" + stringJson+ "}")
+        if terminalOutput["count"] != 0:
+            appSearchInfo = terminalOutput["apps"][0]
+            bundleIdentifier = appSearchInfo["bundleID"]
 
-        bundleIdentifier = jsonOutput["bundleID"]
+            if not isDownloaded(bundleIdentifier):
+                try:
+                    result = subprocess.check_output(["ipatool", "purchase", "-b", bundleIdentifier])
+                except subprocess.CalledProcessError as e:
+                    print("Liscença já obtida ou falha na liscença")
 
-        if not isDownloaded(bundleIdentifier):
-            try:
-                result = subprocess.check_output(["ipatool", "purchase", "-b", bundleIdentifier])
-            except subprocess.CalledProcessError as e:
-                print("Liscença já obtida ou falha na liscença")
-
-            try:
-                result = subprocess.run(["ipatool", "download", "-b", bundleIdentifier, "-o", "./apps"])
-                saveBundleIdentifier(bundleIdentifier)
-            except:
-                print("Falha no download da aplicação")
+                try:
+                    result = subprocess.run(["ipatool", "download", "-b", bundleIdentifier, "-o", "./apps"])
+                    saveBundleIdentifier(bundleIdentifier)
+                except:
+                    print("Falha no download da aplicação")
+            else:
+                print(bundleIdentifier + ": Aplicativo previamente baixado!")
 
 downloadAppStore()
