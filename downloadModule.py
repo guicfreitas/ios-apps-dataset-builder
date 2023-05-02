@@ -1,6 +1,9 @@
 import requests
 import subprocess
 import json
+from bs4 import BeautifulSoup
+import urllib
+import os
 
 def saveBundleIdentifier(bundleIdentifier):
     file = open("Bundles_identifiers.txt", "a")
@@ -50,4 +53,51 @@ def downloadAppStore():
             else:
                 print(bundleIdentifier + ": Aplicativo previamente baixado!")
 
-downloadAppStore()
+def downloadNonAppStoreIpa():
+    url = 'https://app.ipalibrary.net/tweaked-app/' 
+    links = list(filter(lambda x: x is not None, getLinks(url)))
+
+    if len(links) > 0:
+        for homePageLink in links:
+            scrapeIpaFile(homePageLink, url)
+            
+            secondaryLinks = getLinks(homePageLink)
+            if len(secondaryLinks) > 0:
+                for link in secondaryLinks:
+                    if link:
+                        scrapeIpaFile(link, homePageLink)
+        
+
+def downloadWebFile(href, url):
+    file_name = href.split('/')[-1]
+    if isinstance(url, str):
+        urlClean = url
+    else:
+        urlClean = url.get('href')
+    file_url = urllib.parse.urljoin(urlClean, href)
+    file_response = requests.get(file_url)
+    save_path = os.path.join(os.getcwd(), './nonAppStoreApps', file_name)
+    with open(save_path, 'wb') as f:
+        f.write(file_response.content)
+
+def getLinks(url):
+    if isinstance(url, str):
+        link = url
+    else:
+        link = url.get('href')
+    if 'https' in link or 'http' in link:
+        response = requests.get(link)
+        soup = BeautifulSoup(response.text, 'html.parser')
+        links = soup.find_all('a')
+
+        return links
+    else:
+        return []
+
+def scrapeIpaFile(link, url):
+    href = link.get('href')
+    if href.endswith('.ipa'): 
+        if href.startswith('https') or href.startswith('http'):
+            downloadWebFile(href, url)
+
+downloadNonAppStoreIpa()
