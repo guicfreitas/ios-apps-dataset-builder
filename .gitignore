@@ -1,5 +1,6 @@
 #Local Files
 apps/
+nonAppStoreApps/
 Bundles_identifiers.txt
 
 # Byte-compiled / optimized / DLL files
