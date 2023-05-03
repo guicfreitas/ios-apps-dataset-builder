@@ -89,10 +89,13 @@ def getLinks(url):
         link = url
     else:
         link = url.get('href')
-    if 'https' in link or 'http' in link:
-        response = requests.get(link)
-        soup = BeautifulSoup(response.text, 'html.parser')
-        links = soup.find_all('a')
+    if link and ('https' in link or 'http' in link):
+        try:
+            response = requests.get(link)
+            soup = BeautifulSoup(response.text, 'html.parser')
+            links = soup.find_all('a')
+        except:
+            return []
 
         return links
     else:
@@ -100,8 +103,9 @@ def getLinks(url):
 
 def scrapeIpaFile(link, url):
     href = link.get('href')
-    if href.endswith('.ipa'): 
-        if href.startswith('https') or href.startswith('http'):
-            downloadWebFile(href, url)
+    if isinstance(href, str):
+        if href.endswith('.ipa'): 
+            if href.startswith('https') or href.startswith('http'):
+                downloadWebFile(href, url)
 
 downloadNonAppStoreIpa()
