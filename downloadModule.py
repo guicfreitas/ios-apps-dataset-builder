@@ -75,10 +75,14 @@ def downloadWebFile(href, url):
     else:
         urlClean = url.get('href')
     file_url = urllib.parse.urljoin(urlClean, href)
-    file_response = requests.get(file_url)
-    save_path = os.path.join(os.getcwd(), './nonAppStoreApps', file_name)
-    with open(save_path, 'wb') as f:
-        f.write(file_response.content)
+    try:
+        print("Baixando: " + file_name)
+        file_response = requests.get(file_url)
+        save_path = os.path.join(os.getcwd(), './nonAppStoreApps', file_name)
+        with open(save_path, 'wb') as f:
+            f.write(file_response.content)
+    except:
+        print("Falha no download do ipa: " + file_name)
 
 def getLinks(url):
     if isinstance(url, str):
