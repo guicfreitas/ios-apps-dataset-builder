@@ -54,18 +54,30 @@ def downloadAppStore():
                 print(bundleIdentifier + ": Aplicativo previamente baixado!")
 
 def downloadNonAppStoreIpa():
-    url = 'https://app.ipalibrary.net/tweaked-app/' 
-    links = list(filter(lambda x: x is not None, getLinks(url)))
+    sitesToScrap = open("sitesToScrap.txt", "r") 
+    urls = []
 
-    if len(links) > 0:
-        for homePageLink in links:
-            scrapeIpaFile(homePageLink, url)
-            
-            secondaryLinks = getLinks(homePageLink)
-            if len(secondaryLinks) > 0:
-                for link in secondaryLinks:
-                    if link:
-                        scrapeIpaFile(link, homePageLink)
+    for line in sitesToScrap:
+        line = line.strip()
+        urls.append(line)
+    
+    sitesToScrap.close
+
+    for url in urls:
+        print("Fazendo scraping na url: " + url)
+        print("\n")
+
+        links = list(filter(lambda x: x is not None, getLinks(url)))
+
+        if len(links) > 0:
+            for homePageLink in links:
+                scrapeIpaFile(homePageLink, url)
+                
+                secondaryLinks = getLinks(homePageLink)
+                if len(secondaryLinks) > 0:
+                    for link in secondaryLinks:
+                        if link:
+                            scrapeIpaFile(link, homePageLink)
         
 
 def downloadWebFile(href, url):
