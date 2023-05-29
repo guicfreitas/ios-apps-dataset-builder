@@ -1,7 +1,8 @@
 #Local Files
 apps/
-nonAppStoreApps/
 Bundles_identifiers.txt
+ipasDownloaded.txt
+result.csv
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

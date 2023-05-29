@@ -4,30 +4,31 @@ import rotulationModule
 import generationModule
 import multiprocessing
 import time
-import asyncio
-from queue import LifoQueue
+import os
 
-async def prepareForRotulation(fileName):
-    rotulationResult = await asyncio.to_thread(rotulationModule.scanIpaFile, fileName)
+def prepareForRotulation(fileName):
+    rotulationResult = rotulationModule.scanIpaFile(fileName)
     generationModule.generateCSV(fileName, "", rotulationResult)
+    if os.path.exists("./apps/" + fileName):
+        os.remove("./apps/" + fileName)
 
-async def processFile(line):
+def processFile(line):
     fileName = line.replace("\n", "")
-    await prepareForRotulation(fileName)
+    prepareForRotulation(fileName)
+    time.sleep(15)
 
-async def readNewEntries(file_path):
+def readNewEntries(file_path, downloadProcess1: multiprocessing.Process, downloadProcess2: multiprocessing.Process):
     last_position = 0
-    while True:
+    while downloadProcess1.is_alive() or downloadProcess2.is_alive():
         with open(file_path, 'r') as file:
             file.seek(last_position)
             lines = file.readlines()
             last_position = file.tell()
-            tasks = []
-            for line in lines:
-                task = asyncio.create_task(processFile(line))
-                tasks.append(task)
-                await asyncio.sleep(15)
-            await asyncio.gather(*tasks)
+
+            pool = multiprocessing.Pool()
+            pool.map(processFile, lines)
+            pool.close()
+            pool.join()
 
 if __name__ == '__main__':
     p1 = multiprocessing.Process(target=downloadModule.downloadAppStore)
@@ -38,8 +39,9 @@ if __name__ == '__main__':
     appsListName = "ipasDownloaded.txt"
     generationModule.initializeCSV()
 
-    asyncio.run(readNewEntries(appsListName))
+    readNewEntries(appsListName, p1, p2)
 
     p1.join()
     p2.join()
+
     rotulationModule.client.close()
