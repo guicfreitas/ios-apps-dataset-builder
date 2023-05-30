@@ -8,7 +8,8 @@ import os
 
 def prepareForRotulation(fileName):
     rotulationResult = rotulationModule.scanIpaFile(fileName)
-    generationModule.generateCSV(fileName, "", rotulationResult)
+    extractionResult = extractionModule.extractInfoPlist(fileName)
+    generationModule.generateCSV(fileName, extractionResult, rotulationResult)
     if os.path.exists("./apps/" + fileName):
         os.remove("./apps/" + fileName)
 

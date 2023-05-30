@@ -10,13 +10,13 @@ def getAnalysis(analysisId):
         
         while True:
             try:
+                time.sleep(60)
                 response = requests.get(url, headers=headers)
                 if response.json()["data"]["attributes"]["status"] == "completed":
                     return response.json()["data"]["attributes"]["results"]
                     break
-                time.sleep(15)
             except:
-                return "Analysis failed" + response.json()
+                return "Analysis failed " + response.json()["error"]["message"]
                 break
 
 def getUploadUrl():
@@ -29,13 +29,13 @@ def uploadFile(file, url="https://www.virustotal.com/api/v3/files"):
     files = {'file': file}
     try:
         response = requests.post(url, files=files, headers=headers)
+        time.sleep(15)
         return getAnalysis(response.json()["data"]["id"])
     except:
-        return ("Failed to upload file")
+        return ("Failed to upload file " + response.json()["error"]["message"])
 
 def scanIpaFile(fileName):
     try:
-
         fileSize = os.path.getsize("./apps/" + fileName)
         fileSize = fileSize / (1024 * 1024)
     except:
