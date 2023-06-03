@@ -29,7 +29,7 @@ def getAnalysis(analysisId):
                 return json.dumps(response.json()["data"]["attributes"]["results"], indent=4)
                 break
         except:
-            if response.json()["error"]["code"] == "QuotaExceededError":
+            if response.status_code == 429:
                 currentApiKeyIndex = getCurrentApiKey()
 
                 if currentApiKeyIndex < len(apiKeys):
@@ -37,9 +37,9 @@ def getAnalysis(analysisId):
                     return getAnalysis(analysisId)
                 else:
                     return "Get Analysis failed Quota Exceeded"
-        else:
-            return "Analysis failed " + response.json()["error"]["message"]
-            break
+            else:
+                return "Analysis failed"
+                break
 
 def getUploadUrl():
     url = "https://www.virustotal.com/api/v3/files/upload_url"
@@ -48,7 +48,7 @@ def getUploadUrl():
         response = requests.get(url, headers=headers)
         return response.json()["data"]
     except:
-        if response.json()["error"]["code"] == "QuotaExceededError":
+        if response.status_code == 429:
             currentApiKeyIndex = getCurrentApiKey()
 
             if currentApiKeyIndex < len(apiKeys):
@@ -67,7 +67,7 @@ def uploadFile(file, url="https://www.virustotal.com/api/v3/files"):
         time.sleep(15)
         return getAnalysis(response.json()["data"]["id"])
     except:
-        if response.json()["error"]["code"] == "QuotaExceededError":
+        if response.status_code == 429:
             currentApiKeyIndex = getCurrentApiKey()
 
             if currentApiKeyIndex < len(apiKeys):
@@ -76,7 +76,7 @@ def uploadFile(file, url="https://www.virustotal.com/api/v3/files"):
             else:
                 return "File upload failed Quota Exceeded"
         else:
-            return "Failed to upload file " + response.json()["error"]["message"]
+            return "Failed to upload file"
 
 def scanIpaFile(fileName):
     try:
