@@ -39,6 +39,7 @@ if __name__ == '__main__':
 
     appsListName = "ipasDownloaded.txt"
     generationModule.initializeCSV()
+    rotulationModule.createCurrentApiKeyFile()
 
     readNewEntries(appsListName, p1, p2)
 
