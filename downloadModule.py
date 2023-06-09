@@ -143,17 +143,3 @@ def downloadNonAppStoreIpa():
                     for link in secondaryLinks:
                         if link:
                             scrapeIpaFile(link, homePageLink)
-
-def testParalelize():
-    if __name__ == '__main__':
-        # criar processos para as duas funções
-        p1 = multiprocessing.Process(target=downloadAppStore)
-        p2 = multiprocessing.Process(target=downloadNonAppStoreIpa)
-        
-        # iniciar os processos
-        p1.start()
-        p2.start()
-        
-        # aguardar a conclusão dos processos
-        p1.join()
-        p2.join()
