@@ -2,7 +2,6 @@ import downloadModule
 import extractionModule
 import rotulationModule
 import generationModule
-import functools
 import multiprocessing 
 import time
 import os
@@ -56,12 +55,10 @@ if __name__ == '__main__':
     p2.join()
     end = time.time()
 
-    totalTimeSeconds = start - end
+    totalTimeSeconds = end - start
     totalTimeMinutes = totalTimeSeconds / 60
 
-    # Extrair horas e minutos inteiros
     hours = int(totalTimeMinutes // 60)
     minutes = int(totalTimeMinutes % 60)
 
-    # Imprimir o tempo de execução em horas e minutos
     print("Exectuion time:", hours, "h ", minutes, "m.")
