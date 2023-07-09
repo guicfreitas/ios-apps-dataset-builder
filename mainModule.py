@@ -2,24 +2,23 @@ import downloadModule
 import extractionModule
 import rotulationModule
 import generationModule
-import multiprocessing 
+import multiprocessing
+import datetime
 import time
 import os
 
-def prepareForRotulation(fileName, apiKeyIndex):
+def prepareForRotulation(resultFile, fileName, apiKeyIndex):
    
     rotulationResult = rotulationModule.scanIpaFile(fileName, apiKeyIndex)
     extractionResult = extractionModule.extractInfoPlist(fileName)
-    generationModule.generateCSV(fileName, extractionResult, rotulationResult)
-    if os.path.exists("./apps/" + fileName):
-        os.remove("./apps/" + fileName)
+    generationModule.generateCSV(resultFile, fileName, extractionResult, rotulationResult)
 
-def processFile(line, apiKeyIndex):
+def processFile(resultFile, line, apiKeyIndex):
     fileName = line.replace("\n", "")
-    prepareForRotulation(fileName, apiKeyIndex)
+    prepareForRotulation(resultFile, fileName, apiKeyIndex)
     time.sleep(15)
 
-def readNewEntries(file_path, downloadProcess1: multiprocessing.Process, downloadProcess2: multiprocessing.Process):
+def readNewEntries(resultFile, file_path, downloadProcess1: multiprocessing.Process, downloadProcess2: multiprocessing.Process):
     last_position = 0
 
     while downloadProcess1.is_alive() or downloadProcess2.is_alive():
@@ -31,7 +30,7 @@ def readNewEntries(file_path, downloadProcess1: multiprocessing.Process, downloa
 
             pool = multiprocessing.Pool()
             for line in lines:
-                pool.apply_async(processFile, args=(line, apiKeyIndex))
+                pool.apply_async(processFile, args=(resultFile, line, apiKeyIndex))
                 if apiKeyIndex != len(rotulationModule.apiKeys) - 1:
                     apiKeyIndex += 1
                 else:
@@ -47,9 +46,13 @@ if __name__ == '__main__':
     p2.start()
 
     appsListName = "ipasDownloaded.txt"
-    generationModule.initializeCSV()
+    dateTime = datetime.datetime.now()
+    formattedDate = dateTime.strftime("%Y-%m-%d_%H-%M-%S")
+    resultFileName = f"result_{formattedDate}.csv"
 
-    readNewEntries(appsListName, p1, p2)
+    generationModule.initializeCSV(resultFileName)
+
+    readNewEntries(resultFileName, appsListName, p1, p2)
 
     p1.join()
     p2.join()

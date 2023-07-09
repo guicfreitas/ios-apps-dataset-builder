@@ -1,4 +1,6 @@
 import os
+import sys
+sys.path.append('./')
 import psutil
 import pandas as pd
 import downloadModule
@@ -151,6 +153,19 @@ def testDownloadAppStore():
     df = pd.DataFrame(results, columns=['Uso de Tempo (s)', 'Uso de Memória (Kib)', 'Uso de CPU (%)', 'Uso de Upload (bytes/s)', 'Uso de Download (bytes/s)'])
     df.to_csv('resultadosDowloadNonAppStore.csv', index=False)
 
+def removeOutliers(df, col):
+    meanDF = df[col].mean()
+    std = df[col].std()
+
+    superiorLimit = meanDF + (3 * std)
+    inferiorLimit = meanDF - (3 * std)
+
+    outliers = df[(df[col] > superiorLimit) | (df[col] < inferiorLimit)]
+
+    df_clean = df.drop(outliers.index)
+
+    return df_clean
+
 def agregateResult():
     dfRotulacao = pd.read_csv('resultadosRotulacao.csv')
     dfRotulacao = dfRotulacao.where(lambda x: x > 0, 0)
@@ -159,78 +174,87 @@ def agregateResult():
     dfGeracao = pd.read_csv('resultadosGeracao.csv')
     dfGeracao = dfGeracao.where(lambda x: x > 0, 0)
     
-
-    df1mbRotulacao = dfRotulacao[dfRotulacao['Tamanho (MBs)'] <= 1]
-    print(df1mbRotulacao)
-    df5bmRotulacao = dfRotulacao[(dfRotulacao['Tamanho (MBs)'] > 1) & (dfRotulacao['Tamanho (MBs)'] <= 5)]
-    df10mbRotulacao = dfRotulacao[(dfRotulacao['Tamanho (MBs)'] > 5) & (dfRotulacao['Tamanho (MBs)'] <= 10)]
+    df5bmRotulacao = dfRotulacao[dfRotulacao['Tamanho (MBs)'] <= 5]
+    df10mbRotulacao = dfRotulacao[(dfRotulacao['Tamanho (MBs)'] > 5) & (dfRotulacao['Tamanho (MBs)'] <= 50)]
     df100mbRotulacao = dfRotulacao[dfRotulacao['Tamanho (MBs)'] >= 100]
 
-    m1mbRotulacao = df1mbRotulacao.mean()
+    df5bmRotulacao = removeOutliers(df5bmRotulacao, 'Uso de Memória (Kib)')
+    df10mbRotulacao = removeOutliers(df10mbRotulacao, 'Uso de Memória (Kib)')
+    df100mbRotulacao = removeOutliers(df100mbRotulacao, 'Uso de Memória (Kib)')
+    df5bmRotulacao = removeOutliers(df5bmRotulacao, 'Uso de CPU (%)')
+    df10mbRotulacao = removeOutliers(df10mbRotulacao, 'Uso de CPU (%)')
+    df100mbRotulacao = removeOutliers(df100mbRotulacao, 'Uso de CPU (%)')
+
     m5mbRotulacao = df5bmRotulacao.mean()
     m10mbRotulacao = df10mbRotulacao.mean()
     m100mbRotulacao = df100mbRotulacao.mean()
 
-    df1mbExtracao= dfExtracao[dfExtracao['Tamanho (MBs)'] <= 1]
-    df5bmExtracao = dfExtracao[(dfExtracao['Tamanho (MBs)'] > 1) & (dfExtracao['Tamanho (MBs)'] <= 5)]
-    df10mbExtracao = dfExtracao[(dfExtracao['Tamanho (MBs)'] > 5) & (dfExtracao['Tamanho (MBs)'] <= 10)]
+    df5bmExtracao = dfExtracao[dfExtracao['Tamanho (MBs)'] <= 5]
+    df10mbExtracao = dfExtracao[(dfExtracao['Tamanho (MBs)'] > 5) & (dfExtracao['Tamanho (MBs)'] <= 50)]
     df100mbExtracao = dfExtracao[dfExtracao['Tamanho (MBs)'] >= 100]
 
-    m1mbExtracao = df1mbExtracao.mean()
+    df5bmExtracao = removeOutliers(df5bmExtracao, 'Uso de Memória (Kib)')
+    df10mbExtracao = removeOutliers(df10mbExtracao, 'Uso de Memória (Kib)')
+    df100mbExtracao = removeOutliers(df100mbExtracao, 'Uso de Memória (Kib)')
+    df5bmExtracao = removeOutliers(df5bmExtracao, 'Uso de CPU (%)')
+    df10mbExtracao = removeOutliers(df10mbExtracao, 'Uso de CPU (%)')
+    df100mbExtracao = removeOutliers(df100mbExtracao, 'Uso de CPU (%)')
+
     m5mbExtracao = df5bmExtracao.mean()
     m10mbExtracao = df10mbExtracao.mean()
     m100mbExtracao = df100mbExtracao.mean()
 
-    df1mbGeracao = dfGeracao[dfGeracao['Tamanho (MBs)'] <= 1]
-    df5bmGeracao = dfGeracao[(dfGeracao['Tamanho (MBs)'] > 1) & (dfGeracao['Tamanho (MBs)'] <= 5)]
-    df10mbGeracao = dfGeracao[(dfGeracao['Tamanho (MBs)'] > 5) & (dfGeracao['Tamanho (MBs)'] <= 10)]
+    df5bmGeracao = dfGeracao[dfGeracao['Tamanho (MBs)'] <= 5]
+    df10mbGeracao = dfGeracao[(dfGeracao['Tamanho (MBs)'] > 5) & (dfGeracao['Tamanho (MBs)'] <= 50)]
     df100mbGeracao = dfGeracao[dfGeracao['Tamanho (MBs)'] >= 100]
 
-    m1mbGeracao = df1mbGeracao.mean()
+    df5bmGeracao = removeOutliers(df5bmGeracao, 'Uso de Memória (Kib)')
+    df10mbGeracao = removeOutliers(df10mbGeracao, 'Uso de Memória (Kib)')
+    df100mbGeracao = removeOutliers(df100mbGeracao, 'Uso de Memória (Kib)')
+    df5bmGeracao = removeOutliers(df5bmGeracao, 'Uso de CPU (%)')
+    df10mbGeracao = removeOutliers(df10mbGeracao, 'Uso de CPU (%)')
+    df100mbGeracao = removeOutliers(df100mbGeracao, 'Uso de CPU (%)')
+
     m5mbGeracao = df5bmGeracao.mean()
     m10mbGeracao = df10mbGeracao.mean()
     m100mbGeracao = df100mbGeracao.mean()
 
-    print("Rotulacao:")
-    print("\nAté 1MB:")
-    print(m1mbRotulacao)
-
+    print("\nRotulação:")
     print("\nAté 5MB:")
     print(m5mbRotulacao)
 
-    print("\nAté 10MB:")
+    print("\nAté 50MB:")
     print(m10mbRotulacao)
 
     print("\nMaior que 100MB:")
     print(m100mbRotulacao)
 
     print("\nExtraçao:")
-    print("\nAté 1MB:")
-    print(m1mbExtracao)
 
     print("\nAté 5MB:")
     print(m5mbExtracao)
 
-    print("\nAté 10MB:")
+    print("\nAté 50MB:")
     print(m10mbExtracao)
 
     print("\nMaior que 100MB:")
     print(m100mbExtracao)
 
     print("\nGeracao:")
-    print("\nAté 1MB:")
-    print(m1mbGeracao)
 
     print("\nAté 5MB:")
     print(m5mbGeracao)
 
-    print("\nAté 10MB:")
+    print("\nAté 50MB:")
     print(m10mbGeracao)
 
     print("\nMaior que 100MB:")
     print(m100mbGeracao)
 
 def runAllTest():
-    testDownloadAppStore()
+    #rotulationTestExecution()
+    #extractionTestExecution()
+    #generetaionTestExecution()
+    agregateResult()
 
 runAllTest()
