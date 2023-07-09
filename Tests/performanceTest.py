@@ -23,7 +23,7 @@ def testInGeneration(fileName, rotulationResult):
     initialMemory = process_memory()
     inititalCpu = psutil.cpu_percent()
     
-    generationModule.generateCSV("resultTest",fileName, extractionResult, rotulationResult)
+    generationModule.generateCSV("resultTest.csv",fileName, extractionResult, rotulationResult)
 
     totalTime = pd.Timestamp.now() - inititalTime
     finalMemory = process_memory()
@@ -39,7 +39,7 @@ def testInGeneration(fileName, rotulationResult):
 def generetaionTestExecution(rotulationResults):
     results = []
     cont = 0
-    generationModule.initializeCSV("resultTest")
+    generationModule.initializeCSV("resultTest.csv")
 
     total_itens = 100
     progressBar = tqdm(total=total_itens, desc="Gerações", unit="Geração")
@@ -189,48 +189,48 @@ def agregateResult():
     dfGeracao = dfGeracao.where(lambda x: x > 0, 0)
     
     df5bmRotulacao = dfRotulacao[dfRotulacao['Tamanho (MBs)'] <= 5]
-    df10mbRotulacao = dfRotulacao[(dfRotulacao['Tamanho (MBs)'] > 5) & (dfRotulacao['Tamanho (MBs)'] <= 50)]
+    df50mbRotulacao = dfRotulacao[(dfRotulacao['Tamanho (MBs)'] > 5) & (dfRotulacao['Tamanho (MBs)'] <= 50)]
     df100mbRotulacao = dfRotulacao[dfRotulacao['Tamanho (MBs)'] >= 100]
 
     df5bmRotulacao = removeOutliers(df5bmRotulacao, 'Uso de Memória (Kib)')
-    df10mbRotulacao = removeOutliers(df10mbRotulacao, 'Uso de Memória (Kib)')
+    df50mbRotulacao = removeOutliers(df50mbRotulacao, 'Uso de Memória (Kib)')
     df100mbRotulacao = removeOutliers(df100mbRotulacao, 'Uso de Memória (Kib)')
     df5bmRotulacao = removeOutliers(df5bmRotulacao, 'Uso de CPU (%)')
-    df10mbRotulacao = removeOutliers(df10mbRotulacao, 'Uso de CPU (%)')
+    df50mbRotulacao = removeOutliers(df50mbRotulacao, 'Uso de CPU (%)')
     df100mbRotulacao = removeOutliers(df100mbRotulacao, 'Uso de CPU (%)')
 
     m5mbRotulacao = df5bmRotulacao.mean()
-    m10mbRotulacao = df10mbRotulacao.mean()
+    m50mbRotulacao = df50mbRotulacao.mean()
     m100mbRotulacao = df100mbRotulacao.mean()
 
     df5bmExtracao = dfExtracao[dfExtracao['Tamanho (MBs)'] <= 5]
-    df10mbExtracao = dfExtracao[(dfExtracao['Tamanho (MBs)'] > 5) & (dfExtracao['Tamanho (MBs)'] <= 50)]
+    df50mbExtracao = dfExtracao[(dfExtracao['Tamanho (MBs)'] > 5) & (dfExtracao['Tamanho (MBs)'] <= 50)]
     df100mbExtracao = dfExtracao[dfExtracao['Tamanho (MBs)'] >= 100]
 
     df5bmExtracao = removeOutliers(df5bmExtracao, 'Uso de Memória (Kib)')
-    df10mbExtracao = removeOutliers(df10mbExtracao, 'Uso de Memória (Kib)')
+    df50mbExtracao = removeOutliers(df50mbExtracao, 'Uso de Memória (Kib)')
     df100mbExtracao = removeOutliers(df100mbExtracao, 'Uso de Memória (Kib)')
     df5bmExtracao = removeOutliers(df5bmExtracao, 'Uso de CPU (%)')
-    df10mbExtracao = removeOutliers(df10mbExtracao, 'Uso de CPU (%)')
+    df50mbExtracao = removeOutliers(df50mbExtracao, 'Uso de CPU (%)')
     df100mbExtracao = removeOutliers(df100mbExtracao, 'Uso de CPU (%)')
 
     m5mbExtracao = df5bmExtracao.mean()
-    m10mbExtracao = df10mbExtracao.mean()
+    m50mbExtracao = df50mbExtracao.mean()
     m100mbExtracao = df100mbExtracao.mean()
 
     df5bmGeracao = dfGeracao[dfGeracao['Tamanho (MBs)'] <= 5]
-    df10mbGeracao = dfGeracao[(dfGeracao['Tamanho (MBs)'] > 5) & (dfGeracao['Tamanho (MBs)'] <= 50)]
+    df50mbGeracao = dfGeracao[(dfGeracao['Tamanho (MBs)'] > 5) & (dfGeracao['Tamanho (MBs)'] <= 50)]
     df100mbGeracao = dfGeracao[dfGeracao['Tamanho (MBs)'] >= 100]
 
     df5bmGeracao = removeOutliers(df5bmGeracao, 'Uso de Memória (Kib)')
-    df10mbGeracao = removeOutliers(df10mbGeracao, 'Uso de Memória (Kib)')
+    df50mbGeracao = removeOutliers(df50mbGeracao, 'Uso de Memória (Kib)')
     df100mbGeracao = removeOutliers(df100mbGeracao, 'Uso de Memória (Kib)')
     df5bmGeracao = removeOutliers(df5bmGeracao, 'Uso de CPU (%)')
-    df10mbGeracao = removeOutliers(df10mbGeracao, 'Uso de CPU (%)')
+    df50mbGeracao = removeOutliers(df50mbGeracao, 'Uso de CPU (%)')
     df100mbGeracao = removeOutliers(df100mbGeracao, 'Uso de CPU (%)')
 
     m5mbGeracao = df5bmGeracao.mean()
-    m10mbGeracao = df10mbGeracao.mean()
+    m50mbGeracao = df50mbGeracao.mean()
     m100mbGeracao = df100mbGeracao.mean()
 
     print("\nRotulação:")
@@ -238,7 +238,7 @@ def agregateResult():
     print(m5mbRotulacao)
 
     print("\nAté 50MB:")
-    print(m10mbRotulacao)
+    print(m50mbRotulacao)
 
     print("\nMaior que 100MB:")
     print(m100mbRotulacao)
@@ -249,7 +249,7 @@ def agregateResult():
     print(m5mbExtracao)
 
     print("\nAté 50MB:")
-    print(m10mbExtracao)
+    print(m50mbExtracao)
 
     print("\nMaior que 100MB:")
     print(m100mbExtracao)
@@ -260,7 +260,7 @@ def agregateResult():
     print(m5mbGeracao)
 
     print("\nAté 50MB:")
-    print(m10mbGeracao)
+    print(m50mbGeracao)
 
     print("\nMaior que 100MB:")
     print(m100mbGeracao)
