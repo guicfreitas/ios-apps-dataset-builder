@@ -4,7 +4,6 @@ import json
 from bs4 import BeautifulSoup
 import urllib
 import os
-import multiprocessing
 
 def saveDownloadedList(fileName):
     file = open("ipasDownloaded.txt", "a")
@@ -36,14 +35,14 @@ def downloadWebFile(href, url):
         urlClean = url.get('href')
     file_url = urllib.parse.urljoin(urlClean, href)
     try:
-        print("Baixando: " + file_name)
+        print("Downloading: " + file_name)
         file_response = requests.get(file_url)
         save_path = os.path.join(os.getcwd(), './apps', file_name)
         with open(save_path, 'wb') as f:
             f.write(file_response.content)
             saveDownloadedList(file_name)
     except:
-        print("Falha no download do ipa: " + file_name)
+        print("Failed to dowload ipa: " + file_name)
 
 def getLinks(url):
     if isinstance(url, str):
@@ -87,13 +86,13 @@ def downloadAppStore():
     countries = ["dz","ao","ai","ag","ar","am","au","at","az","bs","bh","bb","by","be","bz","bj","bm","bt","bo","ba","bw","br","vg","bg","kh","cm","ca","cv","ky","td","cl","cn","co","cr","hr","cy","cz","ci","cd","dk","dm","do","ec","eg","sv","ee","sz","fj","fi","fr","ga","gm","ge","de","gh","gr","gd","gt","gw","gy","hn","hk","hu","is","in","id","iq","ie","il","it","jm","jp","jo","kz","ke","kr","xk","kw","kg","la","lv","lb","lr","ly","lt","lu","mo","mg","mw","my","mv","ml","mt","mr","mu","mx","fm","md","mn","me","ms","ma","mz","mm","na","np","nl","nz","ni","ne","ng","mk","no","om","pa","pg","py","pe","ph","pl","pt","qa","cg","ro","ru","rw","sa","sn","rs","sc","sl","sg","sk","si","sb","za","es","lk","kn","lc","vc","sr","se","ch","tw","tj","tz","th","to","tt","tn","tm","tc","tr","ae","ug","ua","gb","us","uy","uz","vu","ve","vn","ye","zm","zw"]
     
     for country in countries:
-        print("País: " + country)
+        print("Downloading for country: " + country)
         print("\n")
         try:
             response = requests.get("https://rss.applemarketingtools.com/api/v2/"+country+"/apps/top-free/50/apps.json")
             appInfos = response.json()['feed']['results']
         except:
-            print("Falha ao obter lista de apps do país: " + country)
+            print("Failed to obtain country list: " + country)
             continue
         
         for app in appInfos:
@@ -102,7 +101,7 @@ def downloadAppStore():
             try: 
                 result = subprocess.check_output(["ipatool", "search", appname, "-l", "1", "--format", "json"])
             except:
-                print("Pesquisa falhou!")
+                print("Search failed!")
                 continue
 
             terminalOutput = json.loads(result)
@@ -115,7 +114,7 @@ def downloadAppStore():
                     try:
                         result = subprocess.check_output(["ipatool", "purchase", "-b", bundleIdentifier])
                     except subprocess.CalledProcessError as e:
-                        print("Liscença já obtida ou falha na liscença")
+                        print("License already obtained or license failure")
 
                     try:
                         result = subprocess.check_output(["ipatool", "download", "-b", bundleIdentifier, "-o", "./apps", "--format", "json", "--non-interactive"])
@@ -127,10 +126,10 @@ def downloadAppStore():
                         saveDownloadedList(appname)
                         
                     except:
-                        print("Falha no download da aplicação")
+                        print("Failed to download application")
                     
                 else:
-                    print(bundleIdentifier + ": Aplicativo previamente baixado!")
+                    print(bundleIdentifier + ": Previously downloaded application!")
 
 def downloadAppStoreMaxOf(numberOfApps):
     numFilesDownloaded = 0
@@ -138,13 +137,13 @@ def downloadAppStoreMaxOf(numberOfApps):
     countries = ["dz","ao","ai","ag","ar","am","au","at","az","bs","bh","bb","by","be","bz","bj","bm","bt","bo","ba","bw","br","vg","bg","kh","cm","ca","cv","ky","td","cl","cn","co","cr","hr","cy","cz","ci","cd","dk","dm","do","ec","eg","sv","ee","sz","fj","fi","fr","ga","gm","ge","de","gh","gr","gd","gt","gw","gy","hn","hk","hu","is","in","id","iq","ie","il","it","jm","jp","jo","kz","ke","kr","xk","kw","kg","la","lv","lb","lr","ly","lt","lu","mo","mg","mw","my","mv","ml","mt","mr","mu","mx","fm","md","mn","me","ms","ma","mz","mm","na","np","nl","nz","ni","ne","ng","mk","no","om","pa","pg","py","pe","ph","pl","pt","qa","cg","ro","ru","rw","sa","sn","rs","sc","sl","sg","sk","si","sb","za","es","lk","kn","lc","vc","sr","se","ch","tw","tj","tz","th","to","tt","tn","tm","tc","tr","ae","ug","ua","gb","us","uy","uz","vu","ve","vn","ye","zm","zw"]
     
     for country in countries:
-        print("País: " + country)
+        print("Downloading for country: " + country)
         print("\n")
         try:
             response = requests.get("https://rss.applemarketingtools.com/api/v2/"+country+"/apps/top-free/50/apps.json")
             appInfos = response.json()['feed']['results']
         except:
-            print("Falha ao obter lista de apps do país: " + country)
+            print("Failed to obtain country list: " + country)
             continue
         
         for app in appInfos:
@@ -153,7 +152,7 @@ def downloadAppStoreMaxOf(numberOfApps):
             try: 
                 result = subprocess.check_output(["ipatool", "search", appname, "-l", "1", "--format", "json"])
             except:
-                print("Pesquisa falhou!")
+                print("Search failed!")
                 continue
 
             terminalOutput = json.loads(result)
@@ -166,7 +165,7 @@ def downloadAppStoreMaxOf(numberOfApps):
                     try:
                         result = subprocess.check_output(["ipatool", "purchase", "-b", bundleIdentifier])
                     except subprocess.CalledProcessError as e:
-                        print("Liscença já obtida ou falha na liscença")
+                        print("License already obtained or license failure")
 
                     try:
                         result = subprocess.check_output(["ipatool", "download", "-b", bundleIdentifier, "-o", "./apps", "--format", "json", "--non-interactive"])
@@ -182,10 +181,10 @@ def downloadAppStoreMaxOf(numberOfApps):
                         if numFilesDownloaded >= maxFilesToDownload:
                             return
                     except:
-                        print("Falha no download da aplicação")
+                        print("Failed to download application")
                     
                 else:
-                    print(bundleIdentifier + ": Aplicativo previamente baixado!")
+                    print(bundleIdentifier + ": Previously downloaded application!")
 
 def downloadNonAppStoreIpa():
     
@@ -199,7 +198,7 @@ def downloadNonAppStoreIpa():
     sitesToScrap.close
 
     for url in urls:
-        print("Fazendo scraping na url: " + url)
+        print("Scraping url: " + url)
         print("\n")
 
         links = list(filter(lambda x: x is not None, getLinks(url)))
@@ -228,7 +227,7 @@ def downloadNonAppStoreIpaMaxOf(numberOfApps):
     sitesToScrap.close
 
     for url in urls:
-        print("Fazendo scraping na url: " + url)
+        print("Scraping url: " + url)
         print("\n")
 
         links = list(filter(lambda x: x is not None, getLinks(url)))
