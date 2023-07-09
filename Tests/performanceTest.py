@@ -7,22 +7,23 @@ import downloadModule
 import rotulationModule
 import extractionModule
 import generationModule
-import signal
+from tqdm import tqdm
+import time
 
 def process_memory():
     process = psutil.Process(os.getpid())
     mem_info = process.memory_info()
     return mem_info.rss
 
-def testInGeneration(fileName):
+def testInGeneration(fileName, rotulationResult):
     extractionResult = extractionModule.extractInfoPlist(fileName)
-    rotulationResult = rotulationModule.scanIpaFile(fileName, 1)
+    rotulationResult = rotulationResult
 
     inititalTime = pd.Timestamp.now()
     initialMemory = process_memory()
     inititalCpu = psutil.cpu_percent()
     
-    generationModule.generateCSV(fileName, extractionResult, rotulationResult)
+    generationModule.generateCSV("resultTest",fileName, extractionResult, rotulationResult)
 
     totalTime = pd.Timestamp.now() - inititalTime
     finalMemory = process_memory()
@@ -35,18 +36,21 @@ def testInGeneration(fileName):
 
     return fileSize, time, memory, cpu
 
-def generetaionTestExecution():
+def generetaionTestExecution(rotulationResults):
     results = []
     cont = 0
-    generationModule.initializeCSV()
+    generationModule.initializeCSV("resultTest")
+
+    total_itens = 100
+    progressBar = tqdm(total=total_itens, desc="Gerações", unit="Geração")
 
     for file in os.listdir("./apps"):
         if cont >= 100:
             break
         
         fileName = os.path.join(file)
-        result = testInGeneration(fileName)
-        print(cont)
+        result = testInGeneration(fileName, rotulationResults[cont])
+        progressBar.update(1)
         results.append(result)
         cont += 1
 
@@ -75,13 +79,16 @@ def extractionTestExecution():
     results = []
     cont = 0
 
+    total_itens = 100
+    progressBar = tqdm(total=total_itens, desc="Extrações", unit="Extração")
+
     for file in os.listdir("./apps"):
         if cont >= 100:
             break
         
         fileName = os.path.join(file)
         result = testInExtraction(fileName)
-        print(cont)
+        progressBar.update(1)
         results.append(result)
         cont += 1
 
@@ -104,24 +111,31 @@ def testInRotulation(fileName):
     memory = (finalMemory - initialMemory) / 1024
     cpu = finalCpu - inititalCpu
     
-    return fileSize, time, memory, cpu
+    return fileSize, time, memory, cpu, result
 
 def rotulationTestExecution():
     results = []
+    rotulationResult = []
     cont = 0
 
+    total_itens = 100
+    progressBar = tqdm(total=total_itens, desc="Rotulações", unit="Rotulação")
+
     for file in os.listdir("./apps"):
-        if cont >= 100:
+        if cont >= total_itens:
             break
         
         fileName = os.path.join(file)
         result = testInRotulation(fileName)
-        print(cont)
-        results.append(result)
+        progressBar.update(1)
+        results.append(result[0:4])
+        rotulationResult.append(result[4])
         cont += 1
 
+    progressBar.close()
     df = pd.DataFrame(results, columns=['Tamanho (MBs)', 'Uso de Tempo (s)', 'Uso de Memória (Kib)', 'Uso de CPU (%)'])
     df.to_csv('resultadosRotulacao.csv', index=False)
+    return rotulationResult
 
 
 
@@ -252,9 +266,9 @@ def agregateResult():
     print(m100mbGeracao)
 
 def runAllTest():
-    #rotulationTestExecution()
-    #extractionTestExecution()
-    #generetaionTestExecution()
+    rotulation = rotulationTestExecution()
+    extractionTestExecution()
+    generetaionTestExecution(rotulation)
     agregateResult()
 
 runAllTest()
