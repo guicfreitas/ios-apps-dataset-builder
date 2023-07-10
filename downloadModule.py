@@ -5,10 +5,20 @@ from bs4 import BeautifulSoup
 import urllib
 import os
 
+def initDownloadList():
+    file = open("ipasDownloaded.txt", "w")
+    file.write("")
+    file.close()
+
+def initBundleFiles():
+    file = open("Bundles_identifiers.txt", "w")
+    file.write("")
+    file.close()
+
 def saveDownloadedList(fileName):
     file = open("ipasDownloaded.txt", "a")
     file.write(fileName + "\n")
-    file.close
+    file.close()
 
 def saveBundleIdentifier(bundleIdentifier):
     file = open("Bundles_identifiers.txt", "a")

@@ -1,10 +1,14 @@
+import sys
+sys.path.append('./Tests')
 import downloadModule
 import extractionModule
 import rotulationModule
 import generationModule
+import performanceTest
 import multiprocessing
 import datetime
 import time
+import argparse
 import os
 
 def prepareForRotulation(resultFile, fileName, apiKeyIndex):
@@ -38,7 +42,20 @@ def readNewEntries(resultFile, file_path, downloadProcess1: multiprocessing.Proc
             pool.close()
             pool.join()
 
-if __name__ == '__main__':
+def clearAppsFolder():
+    for fileName in os.listdir("./apps"):
+        path = os.path.join("./apps", fileName)
+        if os.path.isfile(path):
+            os.remove(path)
+
+def addSitesToScrap(site):
+    path = 'sitesToScrap.txt'
+    file = open(path, "a")
+    file.write(site + "\n")
+    file.close()
+
+
+def start():
     start = time.time()
     p1 = multiprocessing.Process(target=downloadModule.downloadAppStore)
     p2 = multiprocessing.Process(target=downloadModule.downloadNonAppStoreIpa)
@@ -49,7 +66,8 @@ if __name__ == '__main__':
     dateTime = datetime.datetime.now()
     formattedDate = dateTime.strftime("%Y-%m-%d_%H-%M-%S")
     resultFileName = f"result_{formattedDate}.csv"
-
+    downloadModule.initDownloadList()
+    downloadModule.initBundleFiles()
     generationModule.initializeCSV(resultFileName)
 
     readNewEntries(resultFileName, appsListName, p1, p2)
@@ -65,3 +83,28 @@ if __name__ == '__main__':
     minutes = int(totalTimeMinutes % 60)
 
     print("Exectuion time:", hours, "h ", minutes, "m.")
+
+def main():
+    if __name__ == '__main__':
+        parser = argparse.ArgumentParser()
+        parser.add_argument('--start', '-c', help='Download, rotulate and extract characteristics from applications in the App Store and outside App Store', action='store_true')
+        parser.add_argument('--add_apiKeys', '-addak', type=str, help='Add new Virus Total API Key.')
+        parser.add_argument('--add_sites', '-adds', type=str, help='Add new sites to download IPA files.')
+        parser.add_argument('--clear_apps', '-ca', help='Delete all applications in apps folder.', action='store_true')
+        parser.add_argument('--test', '-t', help='Start executing tests.', action='store_true')
+
+        args = parser.parse_args()
+
+        if args.start:
+            start()
+        elif args.test:
+            performanceTest.runAllTest()
+        elif args.add_apiKeys:
+            rotulationModule.apiKeys.append(args.add_apiKeys)
+            print(rotulationModule.apiKeys)
+        elif args.clear_apps:
+            clearAppsFolder()
+        elif args.add_sites:
+            addSitesToScrap(args.add_sites)
+
+main()

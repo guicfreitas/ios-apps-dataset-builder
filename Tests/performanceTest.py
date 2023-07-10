@@ -270,5 +270,3 @@ def runAllTest():
     extractionTestExecution()
     generetaionTestExecution(rotulation)
     agregateResult()
-
-runAllTest()
