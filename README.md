@@ -43,7 +43,7 @@ Basta copiar as linhas de comando a seguir para instalar todas as dependências:
 - brew tap majd/repo
 - brew install ipatool
 - python3 -m pip install beautifulsoup4
-- python3 -m pip install pandas==1.3.5
+- python3 -m pip install pandas
 ```
 Configurando IpaTool:
 É necessário possuir uma conta na App Store para configurar o IpaTool (Caso não tenha [clique aqui!](https://appleid.apple.com/account)):
