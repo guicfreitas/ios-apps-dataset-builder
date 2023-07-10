@@ -39,7 +39,6 @@ https://github.com/guicfreitas/ios-apps-dataset-builder.git
 ```
 Basta copiar as linhas de comando a seguir para instalar todas as dependências:
 ```
-- sudo snap install curl
 - sudo apt install python3.8
 - brew tap majd/repo
 - brew install ipatool
