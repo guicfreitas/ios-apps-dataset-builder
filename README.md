@@ -50,7 +50,7 @@ Configurando IpaTool:
 ```
 ipatool auth login
 ```
-Depois só seguir inserindo seu email e senha e está pronta para usar o IOSDBuilder
+Depois é só inserir seu email e senha a IPATool está pronta para ser usada no IOSDBuilder
 
 ## 🚩 Parâmetros Disponíveis:
 ```
@@ -68,5 +68,5 @@ Depois só seguir inserindo seu email e senha e está pronta para usar o IOSDBui
 
 ***É possível rodar cada etapa separadamente.***
 
-***O dataset final fica armazenad no diretório Results e é atualizado enquanto o script roda.***
+***O dataset final fica armazenado no diretório Results e é atualizado enquanto o script roda.***
 
