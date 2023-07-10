@@ -55,7 +55,7 @@ def generetaionTestExecution(rotulationResults):
         cont += 1
 
     df = pd.DataFrame(results, columns=['Tamanho (MBs)', 'Uso de Tempo (s)', 'Uso de Memória (Kib)', 'Uso de CPU (%)'])
-    df.to_csv('resultadosGeracao.csv', index=False)
+    df.to_csv('./Tests/resultadosGeracao.csv', index=False)
 
 def testInExtraction(fileName):
     inititalTime = pd.Timestamp.now()
@@ -93,7 +93,7 @@ def extractionTestExecution():
         cont += 1
 
     df = pd.DataFrame(results, columns=['Tamanho (MBs)', 'Uso de Tempo (s)', 'Uso de Memória (Kib)', 'Uso de CPU (%)'])
-    df.to_csv('resultadosExtracao.csv', index=False)
+    df.to_csv('./Tests/resultadosExtracao.csv', index=False)
 
 def testInRotulation(fileName):
     inititalTime = pd.Timestamp.now()
@@ -134,7 +134,7 @@ def rotulationTestExecution():
 
     progressBar.close()
     df = pd.DataFrame(results, columns=['Tamanho (MBs)', 'Uso de Tempo (s)', 'Uso de Memória (Kib)', 'Uso de CPU (%)'])
-    df.to_csv('resultadosRotulacao.csv', index=False)
+    df.to_csv('./Tests/resultadosRotulacao.csv', index=False)
     return rotulationResult
 
 
@@ -165,7 +165,7 @@ def testDownloadAppStore():
 
     results = [[time, memory, cpu, uploadUse, downloadUse]]
     df = pd.DataFrame(results, columns=['Uso de Tempo (s)', 'Uso de Memória (Kib)', 'Uso de CPU (%)', 'Uso de Upload (bytes/s)', 'Uso de Download (bytes/s)'])
-    df.to_csv('resultadosDowloadNonAppStore.csv', index=False)
+    df.to_csv('./Tests/resultadosDowloadNonAppStore.csv', index=False)
 
 def removeOutliers(df, col):
     meanDF = df[col].mean()
@@ -181,11 +181,11 @@ def removeOutliers(df, col):
     return df_clean
 
 def agregateResult():
-    dfRotulacao = pd.read_csv('resultadosRotulacao.csv')
+    dfRotulacao = pd.read_csv('./Tests/resultadosRotulacao.csv')
     dfRotulacao = dfRotulacao.where(lambda x: x > 0, 0)
-    dfExtracao = pd.read_csv('resultadosExtracao.csv')
+    dfExtracao = pd.read_csv('./Tests/resultadosExtracao.csv')
     dfExtracao = dfExtracao.where(lambda x: x > 0, 0)
-    dfGeracao = pd.read_csv('resultadosGeracao.csv')
+    dfGeracao = pd.read_csv('./Tests/resultadosGeracao.csv')
     dfGeracao = dfGeracao.where(lambda x: x > 0, 0)
     
     df5bmRotulacao = dfRotulacao[dfRotulacao['Tamanho (MBs)'] <= 5]
