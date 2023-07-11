@@ -18,7 +18,7 @@ def getAnalysis(analysisId, apiKeyIndex):
             headers = {"x-apikey": apiKeys[currentApiKeyIndex]}
             response = requests.get(url, headers=headers)
             if response.json()["data"]["attributes"]["status"] == "completed":
-                return json.dumps(response.json()["data"]["attributes"]["results"], indent=4)
+                return response.json()["data"]["attributes"]["results"]
                 break
         except:
             if response.status_code == 429:

@@ -87,7 +87,7 @@ def start():
 def main():
     if __name__ == '__main__':
         parser = argparse.ArgumentParser()
-        parser.add_argument('--start', '-c', help='Download, rotulate and extract characteristics from applications in the App Store and outside App Store', action='store_true')
+        parser.add_argument('--start', '-s', help='Download, rotulate and extract characteristics from applications in the App Store and outside App Store', action='store_true')
         parser.add_argument('--add_apiKeys', '-addak', type=str, help='Add new Virus Total API Key.')
         parser.add_argument('--add_sites', '-adds', type=str, help='Add new sites to download IPA files.')
         parser.add_argument('--clear_apps', '-ca', help='Delete all applications in apps folder.', action='store_true')

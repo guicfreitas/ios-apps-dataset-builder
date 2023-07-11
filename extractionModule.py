@@ -20,10 +20,9 @@ def extractInfoPlist(fileName):
                             with open(infoPlistPath, 'rb') as infoPlistFile:
                                 infoPlistData = infoPlistFile.read()
 
-                            infoPlistDict = plistlib.loads(infoPlistData)
                             try:
-                                infoPlistJson = json.dumps(infoPlistDict, indent=4)
-                                return(infoPlistJson)
+                                infoPlistDict = plistlib.loads(infoPlistData)
+                                return(infoPlistDict)
                             except:
                                 return "Failed to extract Info.plist"
         except:
