@@ -40,17 +40,18 @@ https://github.com/guicfreitas/ios-apps-dataset-builder.git
 Basta copiar as linhas de comando a seguir para instalar todas as dependências:
 ```
 - sudo apt install python3.8
+- /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 - brew tap majd/repo
 - brew install ipatool
 - python3 -m pip install beautifulsoup4
 - python3 -m pip install pandas
 ```
-Configurando IpaTool:
+### Configurando IpaTool:
 É necessário possuir uma conta na App Store para configurar o IpaTool (Caso não tenha [clique aqui!](https://appleid.apple.com/account)):
 ```
 ipatool auth login
 ```
-Depois é só inserir seu email e senha a IPATool está pronta para ser usada no IOSDBuilder
+Depois é só inserir seu email e senha e a IPATool está pronta para ser usada no IOSDBuilder
 
 ## 🚩 Parâmetros Disponíveis:
 ```
@@ -66,7 +67,7 @@ Depois é só inserir seu email e senha a IPATool está pronta para ser usada no
 [//]: # ()
 [//]: # (O parâmetro *-add_sites* recebe uma site em formato de string para ser adicionado na list de sites para realizar o scraping em busca de aplicativos .ipa.)
 
-***É possível rodar cada etapa separadamente.***
+***É possível executar cada parâmetro separadamente.***
 
-***O dataset final fica armazenado no diretório Results e é atualizado enquanto o script roda.***
+***O dataset final fica armazenado no diretório Results e é atualizado enquanto o script executa.***
 
